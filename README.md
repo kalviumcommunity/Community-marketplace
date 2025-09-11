@@ -121,4 +121,9 @@ Push to the branch (git push origin feature-name).
 Create a new Pull Request.
 
 
+## Team Members
 
+- Premapriya(Team Leader)
+- Ranjan
+- Aditya Kannur
+- Akhil
