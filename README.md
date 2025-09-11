@@ -124,6 +124,6 @@ Create a new Pull Request.
 ## Team Members
 
 - Premapriya(Team Leader)
-- Ranjan
+- Ranjan M
 - Aditya Kannur
 - Akhil
