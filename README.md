@@ -1,4 +1,4 @@
-Community Marketplace
+# Community Marketplace.
 
 Welcome to the Community Marketplace project! This application serves as a platform where users can list products, browse listings, and manage their own product inventory. It's designed to facilitate community-driven commerce in a user-friendly environment.
 
