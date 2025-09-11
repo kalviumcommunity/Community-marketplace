@@ -15,7 +15,7 @@ React Navigation: Routing and navigation for your React Native apps.
 
 Axios: Promise-based HTTP client for the browser and Node.js, used for making API requests.
 
-Backend (API)
+## Backend (API)
 
 Node.js: JavaScript runtime built on Chrome's V8 JavaScript engine.
 
@@ -37,7 +37,7 @@ Postman: API testing tool that helps in developing APIs by sending requests to y
 
 ESLint: A static code analysis tool for identifying problematic patterns found in JavaScript code.
 
-🚀 Features
+## 🚀 Features
 
 User Authentication: Secure login and registration using JWT.
 
