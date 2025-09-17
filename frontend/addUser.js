@@ -1,5 +1,5 @@
 // addUser.js
-import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
 export const addUser = async (user) => {
@@ -10,7 +10,7 @@ export const addUser = async (user) => {
       profileImageURL: user.profileImageURL,
       bio: user.bio,
       location: user.location,
-      createdAt: Timestamp.now()
+      createdAt: serverTimestamp()
     });
     console.log("User added with ID:", docRef.id);
     return docRef.id;

@@ -1,5 +1,5 @@
 // addProduct.js
-import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { collection, addDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "./firebaseConfig";
 
 export const addProduct = async (product) => {
@@ -10,7 +10,7 @@ export const addProduct = async (product) => {
       price: product.price,
       imageURL: product.imageURL,
       category: product.category,
-      createdAt: Timestamp.now(),
+      createdAt:serverTimestamp(),
       sellerID: product.sellerID
     });
     console.log("Product added with ID:", docRef.id);

@@ -2,10 +2,10 @@
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import AddProductScreen from "./screens/AddProductScreen";
-import AddUserScreen from "./screens/AddUserScreen";
-import ProductListScreen from "./screens/ProductListScreen";
-import UserFavoritesScreen from "./screens/UserFavoritesScreen";
+import AddProductScreen from "./components/screens/AddProductScreen";
+import AddUserScreen from "./components/screens/AddUserScreen";
+import ProductListScreen from "./components/screens/ProductListScreen";
+import UserFavoritesScreen from "./components/screens/UserFavoritesScreen";
 
 const Stack = createNativeStackNavigator();
 

@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { View, TextInput, Button, Image, StyleSheet } from "react-native";
-import { launchImageLibrary } from "react-native-image-picker";
-import { uploadImage } from "../uploadImage";
-import { addProduct } from "../addProduct";
-
+import * as ImagePicker from 'expo-image-picker';
+import { uploadImage } from "../screens/uploadImage";
+import { addProduct } from "../../addProduct";
 const AddProductScreen = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -13,13 +12,18 @@ const AddProductScreen = () => {
   const [imageURI, setImageURI] = useState(null);
   const [imageURL, setImageURL] = useState("");
 
-  const pickImage = () => {
-    launchImageLibrary({ mediaType: "photo" }, (response) => {
-      if (response.assets && response.assets.length > 0) {
-        setImageURI(response.assets[0].uri);
-      }
-    });
-  };
+const pickImage = async () => {
+  const result = await ImagePicker.launchImageLibraryAsync({
+    mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    allowsEditing: true,
+    aspect: [4, 3],
+    quality: 1,
+  });
+
+  if (!result.canceled) {
+    setImageURI(result.assets[0].uri);
+  }
+};
 
   const handleAddProduct = async () => {
     if (imageURI) {

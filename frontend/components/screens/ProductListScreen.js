@@ -1,7 +1,7 @@
 // /screens/ProductListScreen.js
 import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
-import { getProductsBySeller } from "../getProductsBySeller";
+import { getProductsBySeller } from "../../getProductsBySeller";
 
 const ProductListScreen = () => {
   const [products, setProducts] = useState([]);
