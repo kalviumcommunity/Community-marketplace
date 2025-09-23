@@ -1,22 +1,27 @@
 // addProduct.js
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "./firebaseConfig";
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from './firebaseConfig';
+// import { uploadImage } from './components/screens/uploadImage'; // ❌ Disabled for now
 
-export const addProduct = async (product) => {
+export async function addProduct({ name, description, price, category, imageUri, sellerID }) {
   try {
+    // const imageURL = imageUri
+    //   ? await uploadImage(imageUri, `products/${sellerID}/${Date.now()}.jpg`)
+    //   : null;
+
     const docRef = await addDoc(collection(db, "products"), {
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      imageURL: product.imageURL,
-      category: product.category,
-      createdAt:serverTimestamp(),
-      sellerID: product.sellerID
+      name,
+      description,
+      price: Number(price),
+      // imageURL,  // ❌ Disabled for now
+      category,
+      sellerID,
+      createdAt: serverTimestamp(),
     });
-    console.log("Product added with ID:", docRef.id);
-    return docRef.id;
+
+    return { id: docRef.id, success: true };
   } catch (error) {
-    console.error("Error adding product:", error);
+    console.error("addProduct error", error);
     throw error;
   }
-};
+}
