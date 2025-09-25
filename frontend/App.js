@@ -13,8 +13,8 @@ const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="AddProduct">
-        <Stack.Screen name="AddProduct" component={AddProductScreen} />
+      <Stack.Navigator initialRouteName="ProductList">
+        {/* <Stack.Screen name="AddProduct" component={AddProductScreen} /> */}
         <Stack.Screen name="AddUser" component={AddUserScreen} />
         <Stack.Screen name="ProductList" component={ProductListScreen} />
         <Stack.Screen name="UserFavorites" component={UserFavoritesScreen} />
