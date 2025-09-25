@@ -6,15 +6,16 @@ import AddProductScreen from "./components/screens/AddProductScreen";
 import AddUserScreen from "./components/screens/AddUserScreen";
 import ProductListScreen from "./components/screens/ProductListScreen";
 import UserFavoritesScreen from "./components/screens/UserFavoritesScreen";
+import Home from "./components/screens/Home";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="AddProduct">
+      <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="AddProduct" component={AddProductScreen} />
-        <Stack.Screen name="AddUser" component={AddUserScreen} />
+        <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="ProductList" component={ProductListScreen} />
         <Stack.Screen name="UserFavorites" component={UserFavoritesScreen} />
       </Stack.Navigator>
