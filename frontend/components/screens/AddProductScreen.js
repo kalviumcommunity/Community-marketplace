@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, TextInput, Button, StyleSheet } from "react-native";
 // import * as ImagePicker from 'expo-image-picker';
-import { addProduct } from "../../addProduct";
+import { addProduct } from "../../AddProductScreen";
 // import { uploadToCloudinary } from "../../utils/cloudinaryUpload";
 
 const AddProductScreen = () => {
