@@ -1,4 +1,4 @@
-# Community Marketplace.
+Community Marketplace
 
 Welcome to the Community Marketplace project! This application serves as a platform where users can list products, browse listings, and manage their own product inventory. It's designed to facilitate community-driven commerce in a user-friendly environment.
 
@@ -15,7 +15,7 @@ React Navigation: Routing and navigation for your React Native apps.
 
 Axios: Promise-based HTTP client for the browser and Node.js, used for making API requests.
 
-## Backend (API)
+Backend (API)
 
 Node.js: JavaScript runtime built on Chrome's V8 JavaScript engine.
 
@@ -37,7 +37,7 @@ Postman: API testing tool that helps in developing APIs by sending requests to y
 
 ESLint: A static code analysis tool for identifying problematic patterns found in JavaScript code.
 
-## 🚀 Features
+🚀 Features
 
 User Authentication: Secure login and registration using JWT.
 
@@ -119,11 +119,3 @@ Make your changes and commit them (git commit -am 'Add new feature').
 Push to the branch (git push origin feature-name).
 
 Create a new Pull Request.
-
-
-## Team Members
-
-- Premapriya(Team Leader)
-- Ranjan M
-- Aditya Kannur
-- Akhil
