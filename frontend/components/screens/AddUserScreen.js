@@ -1,19 +1,29 @@
 // /screens/AddUserScreen.js
 import React, { useState } from "react";
-import { View, TextInput, Button, StyleSheet } from "react-native";
+import { 
+  View, 
+  TextInput, 
+  Button, 
+  StyleSheet, 
+  Text, 
+  TouchableOpacity, 
+  Alert,
+  ActivityIndicator 
+} from "react-native";
 import { addUser } from "../../addUser";
-// import * as ImagePicker from 'expo-image-picker';
-// import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-// import { ActivityIndicator } from 'react-native';
+import { auth } from '../../firebaseConfig';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
+import { useAuth } from '../../context/AuthContext';
 
-const AddUserScreen = () => {
-  const [username, setUsername] = useState("");
+const AddUserScreen = ({ navigation }) => {
+  const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState("");
-  const [profileImageURL, setProfileImageURL] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
   const [bio, setBio] = useState("");
   const [location, setLocation] = useState("");
-  // const [image, setImage] = useState(null);
-  // const [uploading, setUploading] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const { setUser } = useAuth();
 
   // const pickImage = async () => {
   //   try {
@@ -65,56 +75,165 @@ const AddUserScreen = () => {
   //   }
   // };
 
-  const handleAddUser = () => {
-    if (!username || !email) {
-      Alert.alert('Error', 'Username and email are required!');
+  const handleAuth = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Email and password are required!');
       return;
     }
-    
-    addUser({
-      username,
-      email,
-      profileImageURL,
-      bio,
-      location
-    });
+
+    setLoading(true);
+    try {
+      let userCredential;
+      
+      if (isLogin) {
+        // Handle Login
+        userCredential = await signInWithEmailAndPassword(auth, email, password);
+      } else {
+        // Handle Registration
+        if (!username) {
+          Alert.alert('Error', 'Username is required for registration!');
+          return;
+        }
+        
+        userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        
+        // Add additional user info to Firestore
+        await addUser({
+          username,
+          email,
+          bio,
+          location,
+          uid: userCredential.user.uid
+        });
+      }
+
+      const userData = {
+        uid: userCredential.user.uid,
+        email: userCredential.user.email,
+        displayName: username || userCredential.user.displayName,
+      };
+      
+      setUser(userData);
+      navigation.replace('ProductList');
+      
+    } catch (error) {
+      console.error('Authentication error:', error);
+      Alert.alert('Error', error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <View style={styles.container}>
-      <TextInput placeholder="Username" value={username} onChangeText={setUsername} style={styles.input} />
-      <TextInput placeholder="Email" value={email} onChangeText={setEmail} style={styles.input} />
+      <Text style={styles.title}>{isLogin ? 'Welcome Back!' : 'Create Account'}</Text>
       
-      {/* {image && <Image source={{ uri: image }} style={styles.image} />}
-      {uploading ? (
-        <ActivityIndicator size="large" color="#0000ff" />
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        keyboardType="email-address"
+        autoCapitalize="none"
+      />
+      
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+      />
+
+      {!isLogin && (
+        <>
+          <TextInput
+            style={styles.input}
+            placeholder="Username"
+            value={username}
+            onChangeText={setUsername}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Bio"
+            value={bio}
+            onChangeText={setBio}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Location"
+            value={location}
+            onChangeText={setLocation}
+          />
+        </>
+      )}
+
+      {loading ? (
+        <ActivityIndicator size="large" color="#0066cc" style={styles.loading} />
       ) : (
-        <Button title="Select Image" onPress={pickImage} />
-      )} */}
-      
-      <TextInput placeholder="Bio" value={bio} onChangeText={setBio} style={styles.input} />
-      <TextInput placeholder="Location" value={location} onChangeText={setLocation} style={styles.input} />
-      <Button title="Add User" onPress={handleAddUser} />
+        <TouchableOpacity style={styles.authButton} onPress={handleAuth}>
+          <Text style={styles.authButtonText}>
+            {isLogin ? 'Login' : 'Register'}
+          </Text>
+        </TouchableOpacity>
+      )}
+
+      <TouchableOpacity
+        style={styles.switchButton}
+        onPress={() => setIsLogin(!isLogin)}
+      >
+        <Text style={styles.switchButtonText}>
+          {isLogin 
+            ? "Don't have an account? Register here" 
+            : "Already have an account? Login here"}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { 
-    padding: 20 
+  container: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'center',
+    backgroundColor: '#fff',
   },
-  input: { 
-    marginBottom: 10, 
-    borderWidth: 1, 
-    padding: 8, 
-    borderRadius: 4 
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
   },
-  image: {
-    width: 200,
-    height: 200,
-    marginVertical: 10,
-    alignSelf: 'center',
-    borderRadius: 10,
+  input: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    padding: 15,
+    marginBottom: 15,
+    borderRadius: 8,
+    fontSize: 16,
+  },
+  authButton: {
+    backgroundColor: '#0066cc',
+    padding: 15,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  authButtonText: {
+    color: '#fff',
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  switchButton: {
+    marginTop: 20,
+  },
+  switchButtonText: {
+    color: '#0066cc',
+    textAlign: 'center',
+  },
+  loading: {
+    marginTop: 20,
   }
 });
 

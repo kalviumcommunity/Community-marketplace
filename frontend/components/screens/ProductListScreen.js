@@ -6,14 +6,55 @@ import {
   TouchableOpacity,
   FlatList,
   StyleSheet,
-  ActivityIndicator
+  ActivityIndicator,
+  Alert
 } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
+import { useAuth } from '../../context/AuthContext';
 
 const ProductListScreen = ({ navigation }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { logout } = useAuth();
+
+  // Set up the logout button in the header
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => {
+            Alert.alert(
+              'Logout',
+              'Are you sure you want to logout?',
+              [
+                {
+                  text: 'Cancel',
+                  style: 'cancel'
+                },
+                {
+                  text: 'Logout',
+                  style: 'destructive',
+                  onPress: async () => {
+                    try {
+                      await logout();
+                      navigation.replace('Login');
+                    } catch (error) {
+                      console.error('Logout error:', error);
+                      Alert.alert('Error', 'Failed to logout. Please try again.');
+                    }
+                  }
+                }
+              ]
+            );
+          }}
+          style={{ marginRight: 15 }}
+        >
+          <Text style={{ color: '#0066cc', fontSize: 16 }}>Logout</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, logout]);
 
   useEffect(() => {
     const fetchProducts = async () => {
