@@ -38,7 +38,7 @@ const ProductListScreen = ({ navigation }) => {
                   onPress: async () => {
                     try {
                       await logout();
-                      navigation.replace('Login');
+                      // No need to navigate manually, App.js will handle it
                     } catch (error) {
                       console.error('Logout error:', error);
                       Alert.alert('Error', 'Failed to logout. Please try again.');

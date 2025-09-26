@@ -95,15 +95,17 @@ const AddUserScreen = ({ navigation }) => {
           return;
         }
         
+        // First create the user in Firebase Auth
         userCredential = await createUserWithEmailAndPassword(auth, email, password);
         
-        // Add additional user info to Firestore
-        await addUser({
+        // Then create the user document in Firestore
+        const userDocId = await addUser({
           username,
           email,
-          bio,
-          location,
-          uid: userCredential.user.uid
+          bio: bio || null,  // Send null if empty
+          location: location || null,  // Send null if empty
+          uid: userCredential.user.uid,
+          // Don't include profileImageURL if we're not using it
         });
       }
 
@@ -114,7 +116,7 @@ const AddUserScreen = ({ navigation }) => {
       };
       
       setUser(userData);
-      navigation.replace('ProductList');
+      // Navigation will happen automatically when auth state changes
       
     } catch (error) {
       console.error('Authentication error:', error);
