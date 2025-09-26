@@ -6,40 +6,64 @@ import {
   TouchableOpacity,
   FlatList,
   StyleSheet,
-  Dimensions,
-  ActivityIndicator
+  ActivityIndicator,
+  Alert
 } from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebaseConfig';
-
-const { width } = Dimensions.get('window');
+import { useAuth } from '../../context/AuthContext';
 
 const ProductListScreen = ({ navigation }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { logout } = useAuth();
 
-  // Sample product for empty state or testing
-  const sampleProducts = [{
-    id: 'sample1',
-    name: 'Sample Product',
-    price: '999',
-    imageURL: 'https://via.placeholder.com/150',
-    category: 'Sample Category',
-    description: 'Sample product description'
-  }];
+  // Set up the logout button in the header
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity
+          onPress={() => {
+            Alert.alert(
+              'Logout',
+              'Are you sure you want to logout?',
+              [
+                {
+                  text: 'Cancel',
+                  style: 'cancel'
+                },
+                {
+                  text: 'Logout',
+                  style: 'destructive',
+                  onPress: async () => {
+                    try {
+                      await logout();
+                      // No need to navigate manually, App.js will handle it
+                    } catch (error) {
+                      console.error('Logout error:', error);
+                      Alert.alert('Error', 'Failed to logout. Please try again.');
+                    }
+                  }
+                }
+              ]
+            );
+          }}
+          style={{ marginRight: 15 }}
+        >
+          <Text style={{ color: '#0066cc', fontSize: 16 }}>Logout</Text>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, logout]);
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, 'products'));
-        const productsData = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setProducts(productsData.length > 0 ? productsData : sampleProducts);
+        const snapshot = await getDocs(collection(db, "products"));
+        const list = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setProducts(list);
       } catch (error) {
         console.error('Error fetching products:', error);
-        setProducts(sampleProducts);
       } finally {
         setLoading(false);
       }
@@ -64,28 +88,34 @@ const ProductListScreen = ({ navigation }) => {
     <View style={styles.container}>
       <FlatList
         data={products}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity 
-            style={styles.productCard}
-            onPress={() => handleProductPress(item.id)}
+            style={styles.card}
+            onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}
           >
             <Image 
               source={{ uri: item.imageURL }} 
-              style={styles.productImage}
+              style={styles.image}
               resizeMode="cover"
             />
-            <View style={styles.productInfo}>
-              <Text style={styles.productName}>{item.name}</Text>
-              <Text style={styles.productPrice}>₹{item.price}</Text>
+            <View style={styles.contentContainer}>
+              <Text style={styles.title}>{item.name}</Text>
+              <Text style={styles.price}>₹{item.price}</Text>
               {item.category && (
-                <Text style={styles.productCategory}>{item.category}</Text>
+                <Text style={styles.category}>{item.category}</Text>
+              )}
+              {item.description && (
+                <Text style={styles.description} numberOfLines={2}>
+                  {item.description}
+                </Text>
+              )}
+              {item.sellerID && (
+                <Text style={styles.seller}>Seller ID: {item.sellerID}</Text>
               )}
             </View>
           </TouchableOpacity>
         )}
-        keyExtractor={item => item.id}
-        numColumns={2}
-        contentContainerStyle={styles.productList}
       />
     </View>
   );
@@ -101,15 +131,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  productList: {
-    padding: 10,
-  },
-  productCard: {
-    flex: 1,
-    margin: 5,
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 10,
+  card: {
+    backgroundColor: 'white',
+    borderRadius: 8,
+    overflow: 'hidden',
+    marginHorizontal: 16,
+    marginVertical: 8,
+    elevation: 3,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -117,32 +145,38 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-    elevation: 5,
-    maxWidth: (width - 30) / 2,
   },
-  productImage: {
+  image: {
     width: '100%',
-    height: 150,
-    borderRadius: 8,
+    height: 200,
   },
-  productInfo: {
-    padding: 8,
+  contentContainer: {
+    padding: 16,
   },
-  productName: {
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  price: {
     fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 4,
-    color: '#333',
+    color: '#2ecc71',
+    fontWeight: '600',
+    marginBottom: 8,
   },
-  productPrice: {
+  category: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#2E8B57',
-    marginBottom: 4,
-  },
-  productCategory: {
-    fontSize: 12,
     color: '#666',
+    marginBottom: 8,
+  },
+  description: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 8,
+  },
+  seller: {
+    fontSize: 12,
+    color: '#999',
   },
 });
 
