@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
@@ -28,14 +28,12 @@ const featuredProducts = [
     title: "Luxury Leather Smartwatch with GPS",
     price: 299.99,
     image: "https://via.placeholder.com/150",
-    category: "Electronics",
   },
   {
     id: 2,
     title: "Handcrafted Ceramic Coffee Mug Set",
     price: 45.0,
     image: "https://via.placeholder.com/150",
-    category: "Kitchen",
   },
 ];
 
@@ -45,62 +43,50 @@ const products = [
     title: "Organic Cotton T-Shirt",
     price: 24.99,
     image: "https://via.placeholder.com/150",
-    category: "Clothes",
   },
   {
     id: 4,
     title: "High-Performance Wireless Earbuds",
     price: 89.0,
     image: "https://via.placeholder.com/150",
-    category: "Electronics",
   },
   {
     id: 5,
     title: "Stainless Steel Water Bottle",
     price: 19.95,
     image: "https://via.placeholder.com/150",
-    category: "Essentials",
   },
   {
     id: 6,
     title: "Compact Travel Backpack",
     price: 59.99,
     image: "https://via.placeholder.com/150",
-    category: "Essentials",
   },
   {
     id: 7,
     title: "Smart Home LED Light Bulb",
     price: 14.5,
     image: "https://via.placeholder.com/150",
-    category: "Devices",
   },
   {
     id: 8,
     title: "Classic Denim Jacket",
     price: 75.0,
     image: "https://via.placeholder.com/150",
-    category: "Clothes",
   },
 ];
 
 export default function Home({ navigation }) {
-  const [selectedCategory, setSelectedCategory] = useState(null);
-
-  // filter products by selected category
-  const filteredProducts =
-    selectedCategory && selectedCategory !== "All"
-      ? products.filter((p) => p.category === selectedCategory)
-      : products;
-
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.title}>VividMarket</Text>
-        <Ionicons name="menu" size={24} color="black" />
 
-        {/* Button to go to AddProduct */}
+        <TouchableOpacity onPress={() => navigation.navigate("Cart")}>
+          <Ionicons name="cart" size={26} color="black" />
+        </TouchableOpacity>
+
         <TouchableOpacity
           style={styles.btn}
           onPress={() => navigation.navigate("AddProduct")}
@@ -112,30 +98,17 @@ export default function Home({ navigation }) {
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <Ionicons name="search" size={20} color="gray" />
-        <TextInput placeholder="Search products..." style={styles.searchInput} />
+        <TextInput
+          placeholder="Search products..."
+          style={styles.searchInput}
+        />
       </View>
 
       {/* Categories */}
       <Text style={styles.sectionTitle}>Quick Category Access</Text>
       <View style={styles.categories}>
-        <TouchableOpacity
-          style={[
-            styles.categoryBtn,
-            selectedCategory === null && styles.activeCategory,
-          ]}
-          onPress={() => setSelectedCategory(null)}
-        >
-          <Text>All</Text>
-        </TouchableOpacity>
         {categories.map((cat) => (
-          <TouchableOpacity
-            key={cat.id}
-            style={[
-              styles.categoryBtn,
-              selectedCategory === cat.name && styles.activeCategory,
-            ]}
-            onPress={() => setSelectedCategory(cat.name)}
-          >
+          <TouchableOpacity key={cat.id} style={styles.categoryBtn}>
             <Text>{cat.name}</Text>
           </TouchableOpacity>
         ))}
@@ -159,27 +132,50 @@ export default function Home({ navigation }) {
         </View>
       </ScrollView>
 
+      {/* Featured Products */}
+      <Text style={styles.sectionTitle}>Featured Products</Text>
+      <View style={styles.grid}>
+        {featuredProducts.map((item) => (
+          <TouchableOpacity
+            key={item.id}
+            style={styles.card}
+            onPress={() => navigation.navigate("ProductDetail", { product: item })}
+          >
+            <Image source={{ uri: item.image }} style={styles.image} />
+            <Text style={styles.price}>${item.price}</Text>
+            <Text style={styles.productTitle}>{item.title}</Text>
 
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate("Cart")}
+            >
+              <Text style={styles.buttonText}>Add to cart</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        ))}
+      </View>
 
       {/* Products for You */}
       <Text style={styles.sectionTitle}>Products for You</Text>
       <View style={styles.grid}>
-        {filteredProducts.length > 0 ? (
-          filteredProducts.map((item) => (
-            <View key={item.id} style={styles.card}>
-              <Image source={{ uri: item.image }} style={styles.image} />
-              <Text style={styles.price}>${item.price}</Text>
-              <Text style={styles.productTitle}>{item.title}</Text>
-              <TouchableOpacity style={styles.button}>
-                <Text style={styles.buttonText}>Add to cart</Text>
-              </TouchableOpacity>
-            </View>
-          ))
-        ) : (
-          <Text style={{ margin: 10, color: "gray" }}>
-            No products in this category.
-          </Text>
-        )}
+        {products.map((item) => (
+          <TouchableOpacity
+            key={item.id}
+            style={styles.card}
+            onPress={() => navigation.navigate("ProductDetail", { product: item })}
+          >
+            <Image source={{ uri: item.image }} style={styles.image} />
+            <Text style={styles.price}>${item.price}</Text>
+            <Text style={styles.productTitle}>{item.title}</Text>
+
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => navigation.navigate("Cart")}
+            >
+              <Text style={styles.buttonText}>Add to cart</Text>
+            </TouchableOpacity>
+          </TouchableOpacity>
+        ))}
       </View>
     </ScrollView>
   );
@@ -195,15 +191,11 @@ const styles = StyleSheet.create({
   title: { fontSize: 20, fontWeight: "bold" },
   btn: {
     backgroundColor: "#8a2be2",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 6,
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    borderRadius: 8,
   },
-  btnText: {
-    color: "#fff",
-    fontWeight: "bold",
-    fontSize: 14,
-  },
+  btnText: { color: "#fff", fontWeight: "600" },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -220,9 +212,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     margin: 5,
-  },
-  activeCategory: {
-    backgroundColor: "#8a2be2",
   },
   banner: {
     width: width - 30,
